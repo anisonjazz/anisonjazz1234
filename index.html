@@ -644,18 +644,20 @@
 
   .sns-grid {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
     margin-top: 3rem;
   }
 
   .sns-card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 1rem;
-    padding: 2.5rem 1.5rem;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 480px;
+    padding: 1.8rem 2.2rem;
     background: var(--dark-4);
     border: 1px solid rgba(201,168,76,0.1);
     text-decoration: none;
@@ -665,29 +667,43 @@
   .sns-card:hover {
     background: rgba(38,28,34,0.9);
     border-color: var(--gold-dim);
-    transform: translateY(-5px);
+    transform: translateY(-3px);
   }
 
   .sns-icon {
-    font-size: 1.8rem;
+    font-size: 2rem;
     line-height: 1;
+    flex-shrink: 0;
+    color: var(--gold);
+    width: 2.5rem;
+    text-align: center;
+  }
+
+  .sns-card-text {
+    flex: 1;
   }
 
   .sns-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.4em;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     color: var(--gold);
-    text-transform: uppercase;
+    margin-bottom: 0.3rem;
   }
 
   .sns-card p {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--cream-dim);
-    text-align: center;
-    line-height: 1.6;
+    line-height: 1.5;
     font-weight: 300;
-    word-break: break-all;
+  }
+
+  @media (max-width: 520px) {
+    .sns-card {
+      max-width: 100%;
+      padding: 1.4rem 1.5rem;
+    }
   }
 
   /* ── CONTACT ── */
@@ -1069,86 +1085,6 @@
   }
 
 
-  /* ── X Follow Banner ── */
-  .x-follow-wrap {
-    margin-top: 3.5rem;
-    max-width: 680px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .x-follow-inner {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 4px;
-    padding: 2rem 2.5rem;
-    transition: border-color 0.3s, background 0.3s;
-  }
-
-  .x-follow-inner:hover {
-    border-color: rgba(212,175,55,0.5);
-    background: rgba(255,255,255,0.06);
-  }
-
-  .x-follow-icon {
-    font-size: 2.5rem;
-    color: var(--gold);
-    flex-shrink: 0;
-    line-height: 1;
-  }
-
-  .x-follow-text {
-    flex: 1;
-  }
-
-  .x-follow-handle {
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 900;
-    font-size: 1.1rem;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.4rem;
-  }
-
-  .x-follow-desc {
-    font-size: 0.82rem;
-    color: var(--cream-dim);
-    letter-spacing: 0.05em;
-    line-height: 1.6;
-  }
-
-  .x-follow-btn {
-    flex-shrink: 0;
-    display: inline-block;
-    background: transparent;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 700;
-    font-size: 0.82rem;
-    letter-spacing: 0.15em;
-    padding: 0.7rem 1.8rem;
-    text-decoration: none;
-    transition: background 0.3s, color 0.3s, transform 0.2s;
-    white-space: nowrap;
-  }
-
-  .x-follow-btn:hover {
-    background: var(--gold);
-    color: var(--dark);
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 600px) {
-    .x-follow-inner {
-      flex-direction: column;
-      text-align: center;
-      padding: 1.5rem;
-    }
-  }
 
 </style>
 </head>
@@ -1443,30 +1379,27 @@
     <h2 class="section-title reveal">SNS・チャンネル</h2>
     <!-- SNSリンクボタン -->
     <div class="sns-grid">
-      <a class="sns-card reveal" href="https://www.tiktok.com/@anisonjazz" target="_blank">
-        <div class="sns-icon">♪</div>
-        <h3>TikTok</h3>
-        <p>@anisonjazz<br>ショート動画で楽しむ</p>
+      <a class="sns-card reveal" href="https://x.com/anisonjazz" target="_blank" rel="noopener">
+        <div class="sns-icon">𝕏</div>
+        <div class="sns-card-text">
+          <h3>X（旧Twitter）</h3>
+          <p>@anisonjazz<br>最新ライブ情報・活動情報をチェック</p>
+        </div>
       </a>
       <a class="sns-card reveal reveal-delay-1" href="https://lin.ee/VAHjCbi" target="_blank">
         <div class="sns-icon">💬</div>
-        <h3>LINE 公式</h3>
-        <p>ライブ情報・最新ニュース<br>をLINEでお知らせ</p>
-      </a>
-    </div>
-
-    <!-- X フォローバナー -->
-    <div class="x-follow-wrap reveal">
-      <div class="x-follow-inner">
-        <div class="x-follow-icon">𝕏</div>
-        <div class="x-follow-text">
-          <p class="x-follow-handle">@anisonjazz</p>
-          <p class="x-follow-desc">フォローして最新ライブ情報・活動情報をいち早くチェック！</p>
+        <div class="sns-card-text">
+          <h3>LINE 公式</h3>
+          <p>ライブ情報・最新ニュースをLINEでお知らせ</p>
         </div>
-        <a class="x-follow-btn" href="https://x.com/anisonjazz" target="_blank" rel="noopener">
-          フォローする
-        </a>
-      </div>
+      </a>
+      <a class="sns-card reveal reveal-delay-2" href="https://www.tiktok.com/@anisonjazz" target="_blank">
+        <div class="sns-icon">♪</div>
+        <div class="sns-card-text">
+          <h3>TikTok</h3>
+          <p>@anisonjazz<br>ショート動画で楽しむ</p>
+        </div>
+      </a>
     </div>
 
     <!-- YouTube埋め込み -->
