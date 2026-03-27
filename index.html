@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#アニソンジャズ | Animesong JAZZ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Noto+Sans+JP:wght@700;900&family=Noto+Serif+JP:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C870;
+    --gold-dim: #8A6A2A;
+    --pink: #E85A8A;
+    --pink-light: #FF8AB0;
+    --dark: #0A0608;
+    --dark-2: #120D10;
+    --dark-3: #1C1418;
+    --dark-4: #261C22;
+    --cream: #F5ECD8;
+    --cream-dim: #C8B898;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Noto Serif JP', serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.3;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, #2A1020 0%, var(--dark) 70%);
+  }
+
+  .hero-bg-lines {
+    position: absolute; inset: 0;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(201,168,76,0.04) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(201,168,76,0.04) 80px);
+    pointer-events: none;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,90,138,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    pointer-events: none;
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -60%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
+  }
+
+  .hero-tag {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    font-size: clamp(0.85rem, 2vw, 1.1rem);
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    border: 1px solid var(--gold-dim);
+    padding: 8px 28px;
+    margin-top: 5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 9rem);
+    font-weight: 900;
+    font-style: normal;
+    line-height: 1;
+    text-align: center;
+    color: transparent;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dim) 70%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title span {
+    display: block;
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    font-weight: 900;
+    font-style: normal;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: unset;
+  }
+  .hero-line1 {
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    letter-spacing: 0.04em;
+    color: var(--gold-light);
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: -0.15em;
+    line-height: 1;
+  }
+  .hero-jazz {
+    font-size: clamp(7rem, 20vw, 18rem);
+    letter-spacing: -0.02em;
+    line-height: 0.85;
+    color: transparent;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dim) 70%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+  }
+  .hero-hashtag-jp {
+    font-size: clamp(1.5rem, 4vw, 3.5rem);
+    letter-spacing: 0.1em;
+    color: var(--pink-light);
+    -webkit-text-fill-color: var(--pink-light);
+    margin-top: 0.3em;
+  }
+
+  .hero-sub {
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+    letter-spacing: 0.25em;
+    color: var(--cream-dim);
+    margin-top: 5rem;
+    text-align: center;
+    line-height: 2.2;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+  }
+
+  .hero-hashtag {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    color: var(--pink);
+    margin-top: 3rem;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  .hero-scroll {
+    position: relative;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 2s forwards;
+  }
+
+  .hero-scroll span {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--gold-dim);
+  }
+
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    animation: scrollAnim 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollAnim {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    padding: 7rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 2.5rem; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-label span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--cream) 60%, var(--cream-dim));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    position: relative;
+    background: linear-gradient(180deg, var(--dark) 0%, var(--dark-2) 100%);
+    max-width: 100%;
+    padding: 7rem 2rem;
+  }
+
+  #about .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .about-text p {
+    font-size: 0.95rem;
+    line-height: 2.2;
+    color: var(--cream-dim);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+
+  .about-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-left: 3px solid var(--gold);
+    padding: 1.5rem 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .feature-card:hover {
+    border-left-color: var(--pink);
+    transform: translateX(8px);
+  }
+
+  .feature-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+
+  .feature-card p {
+    font-size: 0.82rem;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* ── MEMBERS ── */
+  #members {
+    max-width: 100%;
+    background: var(--dark-2);
+    padding: 7rem 2rem;
+  }
+
+  #members .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .members-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--cream-dim);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+  }
+
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .tab-btn.active {
+    color: var(--gold);
+  }
+
+  .tab-btn.active::after {
+    transform: scaleX(1);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  .member-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(201,168,76,0.1);
+    overflow: hidden;
+    transition: transform 0.4s, border-color 0.4s;
+    cursor: default;
+  }
+
+  .member-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  .member-card:hover .member-overlay {
+    opacity: 1;
+  }
+
+  .member-img-wrap {
+    height: 480px;
+    background: var(--dark-4);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .member-initial {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-style: italic;
+    color: rgba(201,168,76,0.2);
+    transition: color 0.3s;
+  }
+
+  .member-card:hover .member-initial {
+    color: rgba(201,168,76,0.4);
+  }
+
+  .member-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,6,8,0.9) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .member-info {
+    padding: 1.5rem;
+  }
+
+  .member-cv {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .member-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--cream);
+    margin-bottom: 0.8rem;
+    line-height: 1;
+  }
+
+  .member-jp {
+    font-size: 0.75rem;
+    color: var(--pink-light);
+    margin-bottom: 0.8rem;
+  }
+
+  .member-desc {
+    font-size: 0.75rem;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .member-card.guest .member-name {
+    font-size: 1.3rem;
+  }
+
+  /* ── LIVE ── */
+  #live {
+    max-width: 100%;
+    background: linear-gradient(180deg, var(--dark-2) 0%, var(--dark-3) 100%);
+    padding: 7rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #live::before {
+    content: 'LIVE';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 20rem;
+    font-style: italic;
+    font-weight: 900;
+    color: rgba(201,168,76,0.025);
+    right: -3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  #live .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .live-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .live-item {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: var(--dark-4);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    transition: background 0.3s, padding-left 0.3s;
+    position: relative;
+  }
+
+  .live-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+  }
+
+  .live-item:hover {
+    background: rgba(38,28,34,0.8);
+    padding-left: 2.5rem;
+  }
+
+  .live-item:hover::before {
+    transform: scaleY(1);
+  }
+
+  .live-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .live-date small {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    margin-top: 4px;
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .live-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--cream);
+    margin-bottom: 0.4rem;
+  }
+
+  .live-info p {
+    font-size: 0.8rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+  }
+
+  .live-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    padding: 6px 16px;
+    border: 1px solid;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .live-badge.upcoming {
+    color: var(--pink-light);
+    border-color: var(--pink);
+  }
+
+  .live-badge.past {
+    color: var(--cream-dim);
+    border-color: rgba(200,184,152,0.3);
+  }
+
+  /* ── MUSIC ── */
+  #music {
+    max-width: 100%;
+    background: var(--dark-3);
+    padding: 7rem 2rem;
+  }
+
+  #music .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .repertoire-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .rep-tag {
+    font-size: 0.78rem;
+    padding: 8px 18px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--cream-dim);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    cursor: default;
+  }
+
+  .rep-tag:hover {
+    background: rgba(201,168,76,0.15);
+    color: var(--gold-light);
+    border-color: var(--gold);
+  }
+
+  .music-note {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--dark-4);
+    border: 1px solid rgba(232,90,138,0.2);
+    border-left: 3px solid var(--pink);
+  }
+
+  .music-note p {
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+    line-height: 2;
+    font-weight: 300;
+  }
+
+  .music-note strong {
+    color: var(--pink-light);
+    font-weight: 500;
+  }
+
+  /* ── SNS ── */
+  #sns {
+    max-width: 100%;
+    background: linear-gradient(180deg, var(--dark-3) 0%, var(--dark) 100%);
+    padding: 7rem 2rem;
+  }
+
+  #sns .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .sns-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .sns-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2.5rem 1.5rem;
+    background: var(--dark-4);
+    border: 1px solid rgba(201,168,76,0.1);
+    text-decoration: none;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  }
+
+  .sns-card:hover {
+    background: rgba(38,28,34,0.9);
+    border-color: var(--gold-dim);
+    transform: translateY(-5px);
+  }
+
+  .sns-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .sns-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .sns-card p {
+    font-size: 0.72rem;
+    color: var(--cream-dim);
+    text-align: center;
+    line-height: 1.6;
+    font-weight: 300;
+    word-break: break-all;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    max-width: 100%;
+    background: var(--dark);
+    padding: 5rem 2rem 7rem;
+    text-align: center;
+  }
+
+  .contact-inner {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-inner p {
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+    line-height: 2;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-divider {
+    width: 60px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 2.5rem auto;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,6,8,0.9) 0%, transparent 100%);
+    backdrop-filter: blur(2px);
+    transition: background 0.4s;
+  }
+
+  nav.scrolled {
+    background: rgba(10,6,8,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .nav-logo {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-style: normal;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--cream-dim);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover {
+    color: var(--gold-light);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 2.5rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer p {
+    font-size: 0.7rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-tag {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(201,168,76,0.3);
+  }
+
+  /* ── HAMBURGER BUTTON ── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 200;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 1.5px;
+    background: var(--gold);
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: center;
+  }
+
+  .nav-hamburger.open span:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .nav-hamburger.open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  .nav-hamburger.open span:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* ── MOBILE MENU DRAWER ── */
+  .nav-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(10,6,8,0.97);
+    backdrop-filter: blur(16px);
+    z-index: 150;
+    padding: 5rem 2rem 3rem;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    transform: translateY(-100%);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .nav-mobile-menu.open {
+    transform: translateY(0);
+  }
+
+  .nav-mobile-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .nav-mobile-menu ul li a {
+    display: block;
+    padding: 1.1rem 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--cream-dim);
+    text-decoration: none;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    transition: color 0.3s, padding-left 0.3s;
+  }
+
+  .nav-mobile-menu ul li a:hover {
+    color: var(--gold-light);
+    padding-left: 0.5rem;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .nav-mobile-menu { display: block; }
+    #about .inner { grid-template-columns: 1fr; gap: 3rem; }
+    .live-item { grid-template-columns: 1fr; }
+    .live-badge { display: none; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  .hero-logo-img {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-logo-img img {
+    max-width: min(600px, 85vw);
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 40px rgba(212,175,55,0.3));
+  }
+
+  .hero-anison-tag {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.4rem, 4vw, 2.5rem);
+    letter-spacing: 0.08em;
+    color: var(--pink-light);
+    text-align: center;
+    margin-top: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.85s forwards;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Contact Form ── */
+  .contact-info {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--cream-dim);
+    line-height: 2;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  .contact-form-wrap {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .required {
+    color: var(--pink);
+    margin-left: 4px;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 2px;
+    color: var(--cream);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1.1rem;
+    transition: border-color 0.3s, background 0.3s;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: rgba(245,235,210,0.25);
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.07);
+  }
+
+  .contact-form textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+
+  .form-submit {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    padding: 0.9rem 2.5rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+    margin-top: 0.5rem;
+  }
+
+  .form-submit:hover {
+    background: var(--gold);
+    color: var(--dark);
+    transform: translateY(-2px);
+  }
+
+  .form-note {
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(245,235,210,0.3);
+    letter-spacing: 0.05em;
+    margin-top: -0.5rem;
+  }
+
+
+  /* ── X Timeline ── */
+  .x-timeline-wrap {
+    margin-top: 4rem;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .x-timeline-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(212,175,55,0.25);
+  }
+
+  .x-icon {
+    font-size: 1.1rem;
+  }
+
+  .x-timeline-container {
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .x-timeline-container .twitter-timeline {
+    display: block;
+  }
+
+
+  /* ── X Follow Banner ── */
+  .x-follow-wrap {
+    margin-top: 3.5rem;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .x-follow-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 4px;
+    padding: 2rem 2.5rem;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .x-follow-inner:hover {
+    border-color: rgba(212,175,55,0.5);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .x-follow-icon {
+    font-size: 2.5rem;
+    color: var(--gold);
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .x-follow-text {
+    flex: 1;
+  }
+
+  .x-follow-handle {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+
+  .x-follow-desc {
+    font-size: 0.82rem;
+    color: var(--cream-dim);
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+  }
+
+  .x-follow-btn {
+    flex-shrink: 0;
+    display: inline-block;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    padding: 0.7rem 1.8rem;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+    white-space: nowrap;
+  }
+
+  .x-follow-btn:hover {
+    background: var(--gold);
+    color: var(--dark);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .x-follow-inner {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a class="nav-logo" href="#hero">#アニソンジャズ</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#members">Members</a></li>
+    <li><a href="#live">Live</a></li>
+    <li><a href="#music">Music</a></li>
+    <li><a href="#sns">SNS</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU DRAWER -->
+<div class="nav-mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#about" class="mobile-link">About</a></li>
+    <li><a href="#members" class="mobile-link">Members</a></li>
+    <li><a href="#live" class="mobile-link">Live</a></li>
+    <li><a href="#music" class="mobile-link">Music</a></li>
+    <li><a href="#sns" class="mobile-link">SNS</a></li>
+    <li><a href="#contact" class="mobile-link">Contact</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">ANIMESONG × JAZZ × CHORUS</div>
+  <div class="hero-logo-img">
+    <img src="images/logo.png" alt="animesong JAZZ" style="width:100%;max-width:600px;height:auto;display:block;margin:0 auto;">
+  </div>
+  <div class="hero-anison-tag">#アニソンジャズ</div>
+  <p class="hero-sub">
+    アニメソングをジャズアレンジして歌う、新時代の音楽ユニット
+  </p>
+  <div class="hero-hashtag">"Cool" に、"Emotional" に</div>
+  <div class="hero-scroll">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div id="about">
+  <div class="inner">
+    <div class="about-text reveal">
+      <div class="section-label"><span>About</span></div>
+      <h2 class="section-title">歌＋朗読劇、アーティストと<br>キャラクターを同時に楽しむ</h2>
+      <p>#アニソンジャズは、日本のアニメソングをジャズにアレンジして歌うプロジェクトです。2025年1月1日に活動を開始し、愛知・名古屋を拠点に精力的にライブ活動を展開しています。</p>
+      <p>「クール」に、「エモーショナル」に—誰もが知るアニメソングの名曲を、ジャズの豊かな表現力で新次元へ。歌と朗読劇を融合させた、唯一無二のステージをお届けします。</p>
+    </div>
+    <div class="about-features reveal reveal-delay-2">
+      <div class="feature-card">
+        <h3>🎷 Jazz Arrangement</h3>
+        <p>全カバー曲はオリジナルアレンジ。少女アニメ、ガンダム、ジブリなど、約100曲のレパートリーを独自のジャズスタイルで演奏します。</p>
+      </div>
+      <div class="feature-card">
+        <h3>🎭 朗読劇 × 歌</h3>
+        <p>アーティスト本人がキャラクターを演じる朗読劇と歌を融合。二つの世界を同時に楽しめる、まったく新しい音楽体験。</p>
+      </div>
+      <div class="feature-card">
+        <h3>✨ Original Songs 2026</h3>
+        <p>2026年からはオリジナル楽曲プロジェクトが始動。キャラクター設定に基づいたオリジナル曲が制作されます。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBERS -->
+<div id="members">
+  <div class="inner">
+    <div class="section-label reveal"><span>Members</span></div>
+    <h2 class="section-title reveal">キャラクターとアーティスト</h2>
+    <div class="members-tabs reveal">
+      <button class="tab-btn active" onclick="switchTab('regular')">レギュラーメンバー</button>
+      <button class="tab-btn" onclick="switchTab('guest')">ゲストメンバー</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-regular">
+      <div class="members-grid">
+        <div class="member-card reveal">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/sana.jpg" alt="SANA" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : 椿 紗奈</div>
+            <div class="member-name">SANA</div>
+            <div class="member-jp">着物と歌が大好きなはいから娘</div>
+            <p class="member-desc">湖畔で親友のAQUAと待ち合わせるが、見知らぬ女性から声をかけられる……</p>
+          </div>
+        </div>
+        <div class="member-card reveal reveal-delay-1">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/aqua.jpg" alt="AQUA" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : しがせいこ</div>
+            <div class="member-name">AQUA</div>
+            <div class="member-jp">夢はタイムマシンを作ること</div>
+            <p class="member-desc">SANAの親友。AQUAにはどうしてもタイムマシンを作らなければならない理由があった……</p>
+          </div>
+        </div>
+        <div class="member-card reveal reveal-delay-2">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/nana.jpg" alt="NANA" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : 高山奈々</div>
+            <div class="member-name">NANA</div>
+            <div class="member-jp">HIROSHIの姉、念願のバイクを購入</div>
+            <p class="member-desc">HIROSHIと共にツーリングに出かけるが、あるきっかけで物語に巻き込まれていく。</p>
+          </div>
+        </div>
+        <div class="member-card reveal reveal-delay-3">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/hiroshi.jpg" alt="HIROSHI" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : 松井 洋</div>
+            <div class="member-name">HIROSHI</div>
+            <div class="member-jp">歌手に憧れる高校生、NANAの弟</div>
+            <p class="member-desc">NANAに誘われ湖にツーリングに出かけるが、ふとした事から自身の秘密を知ることに。</p>
+          </div>
+        </div>
+        <div class="member-card reveal reveal-delay-2">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/plum.jpg" alt="PLUM" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : まこつん</div>
+            <div class="member-name">PLUM</div>
+            <div class="member-jp">宇宙海賊、伝説の鉱石を求めて</div>
+            <p class="member-desc">強気だがちょっとドジなところがある。助手でアンドロイドのJURANと、伝説の鉱石「オメガサファイヤ」が眠る地球へ。</p>
+          </div>
+        </div>
+        <div class="member-card reveal reveal-delay-3">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/juran.jpg" alt="JURAN" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : じゅらん</div>
+            <div class="member-name">JURAN</div>
+            <div class="member-jp">宇宙海賊PLUMの助手、アンドロイド</div>
+            <p class="member-desc">二人の乗る宇宙船「シューティングスター号」のメンテナンス兼、PLUMのお世話係。</p>
+          </div>
+        </div>
+        <div class="member-card reveal reveal-delay-4">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/kana.jpg" alt="KANA" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">CV : 桐生華名</div>
+            <div class="member-name">KANA</div>
+            <div class="member-jp">魔法使い、魔法の国の住人</div>
+            <p class="member-desc">好奇心旺盛で時々人間界に遊びに行くことも。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-guest">
+      <div class="members-grid">
+        <div class="member-card guest reveal">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/sayu.jpg" alt="SAYU" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">Guest</div>
+            <div class="member-name">SAYU</div>
+            <div class="member-jp">魔女キャラクター</div>
+            <p class="member-desc">ゲストメンバーとしてライブに参加。</p>
+          </div>
+        </div>
+        <div class="member-card guest reveal reveal-delay-1">
+          <div class="member-img-wrap" style="background:#000;">
+            <img src="images/azusa.jpg" alt="AZUSA" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+            <div class="member-overlay"></div>
+          </div>
+          <div class="member-info">
+            <div class="member-cv">Guest</div>
+            <div class="member-name">AZUSA</div>
+            <div class="member-jp">海賊キャラクター</div>
+            <p class="member-desc">ゲストメンバーとしてライブに参加。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE -->
+<div id="live">
+  <div class="inner">
+    <div class="section-label reveal"><span>Live</span></div>
+    <h2 class="section-title reveal">ライブ情報</h2>
+    <div class="live-list">
+      <div class="live-item reveal">
+        <div class="live-date">
+          2025.1.1
+          <small>活動開始</small>
+        </div>
+        <div class="live-info">
+          <h3>活動開始</h3>
+          <p>#アニソンジャズ、始動</p>
+        </div>
+        <span class="live-badge past">Completed</span>
+      </div>
+      <div class="live-item reveal">
+        <div class="live-date">
+          2025
+          <small>名古屋栄</small>
+        </div>
+        <div class="live-info">
+          <h3>名古屋栄 LIVE DOXY にてワンマンライブ</h3>
+          <p>2025年、3回のワンマンライブを開催</p>
+        </div>
+        <span class="live-badge past">Completed</span>
+      </div>
+      <div class="live-item reveal reveal-delay-1">
+        <div class="live-date">
+          3.15
+          <small>2026 東京</small>
+        </div>
+        <div class="live-info">
+          <h3>#アニソンジャズ LIVE!!!!!! in 神田</h3>
+          <p>神田スペースキューブ</p>
+        </div>
+        <span class="live-badge past">Completed</span>
+      </div>
+      <div class="live-item reveal reveal-delay-2">
+        <div class="live-date">
+          3.29
+          <small>2026 名古屋</small>
+        </div>
+        <div class="live-info">
+          <h3>#アニソンジャズ LIVE!!!!!! 2026 Spring</h3>
+          <p>名古屋栄 LIVE DOXY</p>
+        </div>
+        <span class="live-badge past">Completed</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MUSIC -->
+<div id="music">
+  <div class="inner">
+    <div class="section-label reveal"><span>Music</span></div>
+    <h2 class="section-title reveal">レパートリー</h2>
+    <p class="reveal" style="font-size:0.85rem;color:var(--cream-dim);line-height:2;font-weight:300;max-width:600px;">全曲オリジナルアレンジ。約100曲のアニソンをジャズの語法で再解釈。懐かしいあの曲が、まったく新しい表情を見せます。</p>
+    <div class="repertoire-grid reveal">
+      <span class="rep-tag">少女アニメ</span>
+      <span class="rep-tag">ガンダムシリーズ</span>
+      <span class="rep-tag">スタジオジブリ</span>
+      <span class="rep-tag">マクロスシリーズ</span>
+      <span class="rep-tag">エヴァンゲリオン</span>
+      <span class="rep-tag">セーラームーン</span>
+      <span class="rep-tag">妖怪人間ベム</span>
+      <span class="rep-tag">その他アニメソング</span>
+      <span class="rep-tag">全曲オリジナルジャズアレンジ</span>
+    </div>
+    <div class="music-note reveal">
+      <p>🎵 <strong>2026年よりオリジナル楽曲プロジェクト始動！</strong><br>
+      キャラクター設定にちなんだオリジナル楽曲を制作予定。アニソンジャズの世界観が、さらに深く広がります。</p>
+    </div>
+  </div>
+</div>
+
+<!-- SNS -->
+<div id="sns">
+  <div class="inner">
+    <div class="section-label reveal"><span>Follow Us</span></div>
+    <h2 class="section-title reveal">SNS・チャンネル</h2>
+    <!-- SNSリンクボタン -->
+    <div class="sns-grid">
+      <a class="sns-card reveal" href="https://www.tiktok.com/@anisonjazz" target="_blank">
+        <div class="sns-icon">♪</div>
+        <h3>TikTok</h3>
+        <p>@anisonjazz<br>ショート動画で楽しむ</p>
+      </a>
+      <a class="sns-card reveal reveal-delay-1" href="https://lin.ee/VAHjCbi" target="_blank">
+        <div class="sns-icon">💬</div>
+        <h3>LINE 公式</h3>
+        <p>ライブ情報・最新ニュース<br>をLINEでお知らせ</p>
+      </a>
+    </div>
+
+    <!-- X フォローバナー -->
+    <div class="x-follow-wrap reveal">
+      <div class="x-follow-inner">
+        <div class="x-follow-icon">𝕏</div>
+        <div class="x-follow-text">
+          <p class="x-follow-handle">@anisonjazz</p>
+          <p class="x-follow-desc">フォローして最新ライブ情報・活動情報をいち早くチェック！</p>
+        </div>
+        <a class="x-follow-btn" href="https://x.com/anisonjazz" target="_blank" rel="noopener">
+          フォローする
+        </a>
+      </div>
+    </div>
+
+    <!-- YouTube埋め込み -->
+    <div class="youtube-section reveal" style="margin-top:3rem; max-width:680px; margin-left:auto; margin-right:auto;">
+      <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:4px; padding:2rem 2.5rem;">
+        <p style="font-family:'Noto Sans JP',sans-serif; font-size:0.95rem; font-weight:700; color:var(--gold); letter-spacing:0.08em; margin-bottom:1.2rem; text-align:center;">公式YouTubeチャンネル「妖怪人間ベム」</p>
+        <div style="position:relative; width:100%; aspect-ratio:16/9;">
+          <iframe style="position:absolute; top:0; left:0; width:100%; height:100%;" src="https://www.youtube.com/embed/Q4AGk9Fgfqw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact">
+  <div class="contact-inner reveal">
+    <div class="section-label" style="justify-content:center;"><span>Contact</span></div>
+    <h2 class="section-title" style="text-align:center;">お問い合わせ</h2>
+    <div class="contact-divider"></div>
+
+    <div class="contact-info">
+      <p>株式会社カラオケエース</p>
+      <p>〒472-0035 愛知県知立市長田三丁目32番地3 2F</p>
+      <p>☎ 0566-95-3151</p>
+    </div>
+
+    <div class="contact-form-wrap">
+      <!-- Formspreeを使用: https://formspree.io で info@karaokeace.co.jp を登録後、YOUR_FORM_ID を置き換えてください -->
+      <form class="contact-form" action="https://formspree.io/f/xkoqnywq" method="POST">
+        <input type="hidden" name="_replyto" value="info@karaokeace.co.jp">
+        <input type="hidden" name="_subject" value="【#アニソンジャズ】お問い合わせ">
+
+        <div class="form-group">
+          <label for="name">お名前 <span class="required">*</span></label>
+          <input type="text" id="name" name="name" placeholder="山田 太郎" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">メールアドレス <span class="required">*</span></label>
+          <input type="email" id="email" name="email" placeholder="example@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="message">お問い合わせ内容 <span class="required">*</span></label>
+          <textarea id="message" name="message" rows="6" placeholder="お問い合わせ内容をご記入ください" required></textarea>
+        </div>
+
+        <button type="submit" class="form-submit">
+          <span>送信する</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+
+        <p class="form-note">※ Formspreeの無料プランを使用しています。送信後、確認メールが届きます。</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 #アニソンジャズ / 株式会社カラオケエース</p>
+  <div class="footer-tag">animesong JAZZ</div>
+  <p>〒472-0035 愛知県知立市 / 0566-95-3151</p>
+</footer>
+
+<script>
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Tabs
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', (i === 0 && tab === 'regular') || (i === 1 && tab === 'guest'));
+    });
+    document.getElementById('tab-regular').classList.toggle('active', tab === 'regular');
+    document.getElementById('tab-guest').classList.toggle('active', tab === 'guest');
+  }
+</script>
+
+</body>
+</html>
