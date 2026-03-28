@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AQUAとオセロ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: linear-gradient(135deg, #0e0a1f 0%, #1a0f35 50%, #0a1628 100%);
+      min-height: 100vh;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: #eef;
+      overflow-x: hidden;
+    }
+
+    /* ── 背景の星 ── */
+    #bg-stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--d) ease-in-out infinite var(--delay);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ── TITLE SCREEN ── */
+    #title-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      cursor: pointer;
+      overflow: hidden;
+      background: #07061a;
+      transition: opacity 0.8s ease;
+    }
+    #title-screen.fade-out { opacity: 0; pointer-events: none; }
+    #title-aqua-img {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      height: 85%;
+      max-width: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+      filter: drop-shadow(0 0 40px rgba(100,180,255,0.45));
+    }
+    #title-bg-glow {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 80%, rgba(80,160,255,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #title-stars { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: #fff; border-radius: 50%;
+      animation: twinkle var(--d) ease-in-out infinite var(--delay);
+    }
+    #title-content {
+      position: relative; z-index: 2;
+      text-align: center; padding-bottom: 44px; width: 100%;
+    }
+    #title-logo {
+      font-family: 'Nunito', 'Noto Sans JP', sans-serif;
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #fff;
+      text-shadow: 0 0 30px rgba(100,180,255,0.9), 0 0 70px rgba(100,180,255,0.4);
+      margin-bottom: 6px;
+    }
+    #title-logo span { color: #7ecfff; }
+    #title-sub {
+      font-size: clamp(0.7rem, 2.5vw, 0.95rem);
+      letter-spacing: 0.4em;
+      color: rgba(200,230,255,0.65);
+      margin-bottom: 30px;
+    }
+    #tap-prompt {
+      font-size: clamp(0.85rem, 3vw, 1.05rem);
+      letter-spacing: 0.3em;
+      color: rgba(255,255,255,0.9);
+      animation: blink 1.6s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+
+    /* ── GAME LAYOUT ── */
+    #game-wrap {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 28px;
+      padding: 24px 16px 40px;
+      min-height: 100vh;
+    }
+
+    /* ── LEFT: main game ── */
+    #game-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    /* タイトル */
+    #game-title {
+      font-family: 'Nunito', 'Noto Sans JP', sans-serif;
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(126,207,255,0.7);
+      margin-top: 8px;
+    }
+    #game-title span { color: #7ecfff; }
+
+    /* モード選択 */
+    #mode-select {
+      display: flex;
+      gap: 10px;
+    }
+    #mode-select button {
+      padding: 8px 22px;
+      border: 2px solid rgba(126,207,255,0.3);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      background: rgba(255,255,255,0.05);
+      color: rgba(220,240,255,0.7);
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    #mode-select button:hover {
+      background: rgba(126,207,255,0.15);
+      color: #fff;
+      border-color: rgba(126,207,255,0.6);
+    }
+    #mode-select button.active {
+      background: linear-gradient(135deg, rgba(100,160,255,0.35), rgba(180,100,255,0.35));
+      border-color: #7ecfff;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(126,207,255,0.3);
+    }
+
+    /* スコア */
+    #info {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      justify-content: center;
+    }
+    .score-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      flex: 1;
+      max-width: 160px;
+    }
+    .score-box.active-turn {
+      border-color: rgba(126,207,255,0.6);
+      box-shadow: 0 0 16px rgba(126,207,255,0.2);
+    }
+    .score-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      opacity: 0.75;
+      letter-spacing: 0.05em;
+    }
+    .score-num {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      margin-left: auto;
+      line-height: 1;
+    }
+    .score-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+    }
+    .score-icon.black { background: radial-gradient(circle at 35% 35%, #666, #111); border: 2px solid rgba(255,255,255,0.2); }
+    .score-icon.white { background: radial-gradient(circle at 35% 35%, #fff, #ddd); border: 2px solid rgba(0,0,0,0.15); }
+
+    /* ステータス */
+    #status {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #aedeff;
+      height: 1.5em;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 12px rgba(126,207,255,0.5);
+    }
+
+    /* ボード */
+    #board-wrap {
+      background: linear-gradient(135deg, rgba(126,207,255,0.15), rgba(180,100,255,0.1));
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(126,207,255,0.2);
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      background: #0e6b35;
+      gap: 1px;
+      border-radius: 12px;
+      overflow: hidden;
+      width: min(512px, calc(100vw - 64px));
+      height: min(512px, calc(100vw - 64px));
+    }
+    .cell {
+      background: #117a3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.12s;
+    }
+    .cell:hover { background: #1a9448; }
+    .cell.hint::after {
+      content: '';
+      width: 30%; height: 30%;
+      border-radius: 50%;
+      background: rgba(255,240,150,0.45);
+      position: absolute;
+      box-shadow: 0 0 6px rgba(255,240,100,0.3);
+    }
+    .piece {
+      width: 78%; height: 78%;
+      border-radius: 50%;
+      position: absolute;
+      transition: transform 0.15s;
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.5);
+    }
+    .piece.black { background: radial-gradient(circle at 35% 30%, #777, #111); }
+    .piece.white { background: radial-gradient(circle at 35% 30%, #fff, #ccc); }
+    .piece.flip { animation: flip 0.3s ease-in-out; }
+    @keyframes flip {
+      0%   { transform: scaleX(1); }
+      50%  { transform: scaleX(0); }
+      100% { transform: scaleX(1); }
+    }
+
+    /* ボタン */
+    #buttons button {
+      padding: 12px 32px;
+      border: none;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      background: linear-gradient(135deg, #3a7bd5, #7c3aed);
+      color: #fff;
+      letter-spacing: 0.1em;
+      box-shadow: 0 4px 20px rgba(80,120,255,0.35);
+      transition: all 0.2s;
+    }
+    #buttons button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(80,120,255,0.5);
+    }
+
+    /* ── RIGHT: AQUA character ── */
+    #aqua-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      padding-top: 16px;
+    }
+    #aqua-char-img {
+      width: clamp(130px, 18vw, 220px);
+      object-fit: contain;
+      object-position: top center;
+      filter: drop-shadow(0 0 20px rgba(126,207,255,0.35));
+      border-radius: 0;
+    }
+    #aqua-name-tag {
+      margin-top: 8px;
+      background: linear-gradient(135deg, rgba(100,160,255,0.25), rgba(180,100,255,0.25));
+      border: 1px solid rgba(126,207,255,0.4);
+      border-radius: 999px;
+      padding: 5px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #aedeff;
+    }
+    #aqua-speech {
+      margin-top: 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(126,207,255,0.2);
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: rgba(220,240,255,0.85);
+      max-width: 160px;
+      text-align: center;
+      line-height: 1.6;
+      position: relative;
+    }
+    #aqua-speech::before {
+      content: '';
+      position: absolute;
+      top: -8px; left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-bottom-color: rgba(126,207,255,0.2);
+      border-top: 0;
+    }
+
+    /* モバイル: AQUAパネル非表示 → ボード下に小さく */
+    @media (max-width: 700px) {
+      #game-wrap {
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 12px 40px;
+        gap: 12px;
+      }
+      #aqua-panel {
+        flex-direction: row;
+        gap: 14px;
+        align-items: flex-end;
+        padding-top: 0;
+      }
+      #aqua-char-img {
+        width: 90px;
+        height: 110px;
+        object-position: top center;
+      }
+      #aqua-speech { max-width: 200px; font-size: 0.8rem; }
+      #aqua-speech::before {
+        top: 50%; left: -8px;
+        transform: translateY(-50%);
+        border: 8px solid transparent;
+        border-right-color: rgba(126,207,255,0.2);
+        border-left: 0;
+        border-bottom-color: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="bg-stars"></div>
+
+  <!-- TITLE SCREEN -->
+  <div id="title-screen" onclick="startGame()">
+    <div id="title-stars"></div>
+    <div id="title-bg-glow"></div>
+    <img id="title-aqua-img" src="images/aqua.jpg" alt="AQUA">
+    <div id="title-content">
+      <div id="title-logo"><span>AQUA</span>とオセロ</div>
+      <div id="title-sub">Animesong JAZZ</div>
+      <div id="tap-prompt">― TAP TO START ―</div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-wrap">
+    <div id="game-main">
+      <div id="game-title"><span>AQUA</span>とオセロ</div>
+
+      <div id="mode-select">
+        <button id="btn-pvp" class="active" onclick="setMode('pvp')">2人対戦</button>
+        <button id="btn-pvc" onclick="setMode('pvc')">VS AQUA</button>
+      </div>
+
+      <div id="info">
+        <div class="score-box" id="score-black">
+          <div class="score-icon black"></div>
+          <div class="score-label">あなた</div>
+          <div class="score-num" id="black-score">2</div>
+        </div>
+        <div class="score-box" id="score-white">
+          <div class="score-icon white"></div>
+          <div class="score-label">AQUA</div>
+          <div class="score-num" id="white-score">2</div>
+        </div>
+      </div>
+
+      <div id="status">黒の番です</div>
+
+      <div id="board-wrap">
+        <div id="board"></div>
+      </div>
+
+      <div id="buttons">
+        <button onclick="newGame()">新しいゲーム</button>
+      </div>
+    </div>
+
+    <!-- AQUA キャラクター -->
+    <div id="aqua-panel">
+      <img id="aqua-char-img" src="images/aqua.jpg" alt="AQUA">
+      <div id="aqua-name-tag">AQUA</div>
+      <div id="aqua-speech" id="aqua-speech">いっしょにオセロしよ♪</div>
+    </div>
+  </div>
+
+<script>
+const EMPTY = 0, BLACK = 1, WHITE = 2;
+const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+
+const AQUA_MSGS = {
+  start:  ['いっしょにオセロしよ♪', 'がんばって！', 'たのしもうね♪'],
+  myturn: ['うーん、どこに置こうかな…', 'ふふ、ここかな？', 'いただきます♪'],
+  win:    ['やったー！勝っちゃった♪', 'AQUA、強いでしょ？', 'えへへ、勝ったよ！'],
+  lose:   ['やるじゃない！', 'くやしい…！またやろ？', 'つぎは負けないよ！'],
+  draw:   ['引き分けだね！', 'いい勝負だったね♪'],
+};
+
+function aquaSay(key) {
+  const msgs = AQUA_MSGS[key];
+  const el = document.getElementById('aqua-speech');
+  if (el) el.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+}
+
+let board, current, gameOver, mode = 'pvp';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btn-pvp').classList.toggle('active', m === 'pvp');
+  document.getElementById('btn-pvc').classList.toggle('active', m === 'pvc');
+  newGame();
+}
+
+function newGame() {
+  board = Array.from({length: 8}, () => Array(8).fill(EMPTY));
+  board[3][3] = WHITE; board[3][4] = BLACK;
+  board[4][3] = BLACK; board[4][4] = WHITE;
+  current = BLACK;
+  gameOver = false;
+  render();
+  updateStatus();
+  aquaSay('start');
+  if (mode === 'pvc' && current === WHITE) setTimeout(cpuMove, 500);
+}
+
+function opponent(c) { return c === BLACK ? WHITE : BLACK; }
+function inBounds(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+function getFlips(board, r, c, color) {
+  if (board[r][c] !== EMPTY) return [];
+  const flips = [];
+  for (const [dr, dc] of DIRS) {
+    let nr = r + dr, nc = c + dc, line = [];
+    while (inBounds(nr, nc) && board[nr][nc] === opponent(color)) {
+      line.push([nr, nc]);
+      nr += dr; nc += dc;
+    }
+    if (line.length && inBounds(nr, nc) && board[nr][nc] === color) flips.push(...line);
+  }
+  return flips;
+}
+
+function validMoves(board, color) {
+  const moves = [];
+  for (let r = 0; r < 8; r++)
+    for (let c = 0; c < 8; c++)
+      if (getFlips(board, r, c, color).length) moves.push([r, c]);
+  return moves;
+}
+
+function place(r, c) {
+  if (gameOver) return;
+  if (mode === 'pvc' && current === WHITE) return;
+  const flips = getFlips(board, r, c, current);
+  if (!flips.length) return;
+  doMove(r, c, current, flips);
+}
+
+function doMove(r, c, color, flips) {
+  board[r][c] = color;
+  for (const [fr, fc] of flips) board[fr][fc] = color;
+
+  const placedCell = document.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+  if (placedCell) {
+    const p = document.createElement('div');
+    p.className = 'piece ' + (color === BLACK ? 'black' : 'white');
+    placedCell.appendChild(p);
+    placedCell.classList.remove('hint');
+  }
+
+  for (const [fr, fc] of flips) {
+    const cell = document.querySelector(`[data-r="${fr}"][data-c="${fc}"]`);
+    const piece = cell && cell.querySelector('.piece');
+    if (piece) {
+      piece.classList.remove('flip');
+      void piece.offsetWidth;
+      piece.classList.add('flip');
+      setTimeout(() => { piece.className = 'piece ' + (color === BLACK ? 'black' : 'white'); }, 150);
+    }
+  }
+
+  if (mode === 'pvc' && color === WHITE) aquaSay('myturn');
+  setTimeout(nextTurn, 320);
+}
+
+function nextTurn() {
+  const opp = opponent(current);
+  if (validMoves(board, opp).length) {
+    current = opp;
+  } else if (!validMoves(board, current).length) {
+    gameOver = true;
+  }
+  render();
+  updateStatus();
+  if (!gameOver && mode === 'pvc' && current === WHITE) setTimeout(cpuMove, 500);
+}
+
+function cpuMove() {
+  if (gameOver || current !== WHITE) return;
+  const moves = validMoves(board, WHITE);
+  if (!moves.length) return;
+  let best = null, bestScore = -1;
+  for (const [r, c] of moves) {
+    const score = getFlips(board, r, c, WHITE).length;
+    if (score > bestScore) { bestScore = score; best = [r, c]; }
+  }
+  const flips = getFlips(board, best[0], best[1], WHITE);
+  doMove(best[0], best[1], WHITE, flips);
+}
+
+function countScores() {
+  let b = 0, w = 0;
+  for (const row of board) for (const v of row) {
+    if (v === BLACK) b++; else if (v === WHITE) w++;
+  }
+  return [b, w];
+}
+
+function updateStatus() {
+  const [b, w] = countScores();
+  document.getElementById('black-score').textContent = b;
+  document.getElementById('white-score').textContent = w;
+
+  const sb = document.getElementById('score-black');
+  const sw = document.getElementById('score-white');
+  sb.classList.toggle('active-turn', !gameOver && current === BLACK);
+  sw.classList.toggle('active-turn', !gameOver && current === WHITE);
+
+  const st = document.getElementById('status');
+  if (gameOver) {
+    if (b > w)      { st.textContent = 'あなたの勝ち！🎉'; aquaSay('lose'); }
+    else if (w > b) { st.textContent = 'AQUAの勝ち！'; aquaSay('win'); }
+    else            { st.textContent = '引き分け！'; aquaSay('draw'); }
+  } else {
+    const cpu = mode === 'pvc' && current === WHITE ? '（AQUA）' : '';
+    st.textContent = (current === BLACK ? '黒' : '白') + cpu + 'の番です';
+  }
+}
+
+function render() {
+  const boardEl = document.getElementById('board');
+  boardEl.innerHTML = '';
+  const hints = new Set();
+  if (!gameOver) {
+    for (const [r, c] of validMoves(board, current)) hints.add(`${r},${c}`);
+  }
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell' + (hints.has(`${r},${c}`) ? ' hint' : '');
+      cell.dataset.r = r; cell.dataset.c = c;
+      cell.onclick = () => place(r, c);
+      if (board[r][c] !== EMPTY) {
+        const piece = document.createElement('div');
+        piece.className = 'piece ' + (board[r][c] === BLACK ? 'black' : 'white');
+        cell.appendChild(piece);
+      }
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+newGame();
+
+// 背景の星
+(function() {
+  const bg = document.getElementById('bg-stars');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'bg-star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    const size = Math.random() < 0.2 ? 3 : 2;
+    s.style.width = s.style.height = size + 'px';
+    s.style.setProperty('--d', (2 + Math.random() * 4).toFixed(1) + 's');
+    s.style.setProperty('--delay', '-' + (Math.random() * 5).toFixed(1) + 's');
+    bg.appendChild(s);
+  }
+})();
+
+// タイトル画面の星
+(function() {
+  const container = document.getElementById('title-stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--d', (2 + Math.random() * 3).toFixed(1) + 's');
+    s.style.setProperty('--delay', '-' + (Math.random() * 4).toFixed(1) + 's');
+    const size = Math.random() < 0.3 ? 3 : 2;
+    s.style.width = s.style.height = size + 'px';
+    container.appendChild(s);
+  }
+})();
+
+function startGame() {
+  const ts = document.getElementById('title-screen');
+  ts.classList.add('fade-out');
+  setTimeout(() => ts.style.display = 'none', 800);
+}
+</script>
+</body>
+</html>
