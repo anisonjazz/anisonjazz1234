@@ -164,6 +164,45 @@
       box-shadow: 0 0 14px rgba(126,207,255,0.3);
     }
 
+    /* 難易度選択 */
+    #difficulty-select {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    #difficulty-select.visible { display: flex; }
+    #difficulty-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: rgba(200,230,255,0.5);
+    }
+    #difficulty-btns { display: flex; gap: 8px; }
+    .diff-btn {
+      padding: 6px 16px;
+      border: 1.5px solid rgba(255,160,200,0.3);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,200,220,0.7);
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .diff-btn:hover {
+      background: rgba(255,160,200,0.15);
+      color: #fff;
+      border-color: rgba(255,160,200,0.6);
+    }
+    .diff-btn.active {
+      background: linear-gradient(135deg, rgba(255,100,160,0.35), rgba(200,80,255,0.35));
+      border-color: #ff9dc0;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255,100,160,0.3);
+    }
+
     /* スコア */
     #info {
       display: flex;
@@ -398,6 +437,15 @@
         <button id="btn-pvc" onclick="setMode('pvc')">VS AQUA</button>
       </div>
 
+      <div id="difficulty-select">
+        <div id="difficulty-label">― 難易度 ―</div>
+        <div id="difficulty-btns">
+          <button class="diff-btn active" id="diff-easy"   onclick="setDifficulty('easy')">かんたん</button>
+          <button class="diff-btn"        id="diff-normal" onclick="setDifficulty('normal')">ふつう</button>
+          <button class="diff-btn"        id="diff-hard"   onclick="setDifficulty('hard')">むずかしい</button>
+        </div>
+      </div>
+
       <div id="info">
         <div class="score-box" id="score-black">
           <div class="score-icon black"></div>
@@ -434,12 +482,25 @@
 const EMPTY = 0, BLACK = 1, WHITE = 2;
 const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 
+// ── 盤面の重みテーブル ──
+const POS_WEIGHTS = [
+  [100,-20, 10,  5,  5, 10,-20,100],
+  [-20,-50, -2, -2, -2, -2,-50,-20],
+  [ 10, -2,  1,  1,  1,  1, -2, 10],
+  [  5, -2,  1,  1,  1,  1, -2,  5],
+  [  5, -2,  1,  1,  1,  1, -2,  5],
+  [ 10, -2,  1,  1,  1,  1, -2, 10],
+  [-20,-50, -2, -2, -2, -2,-50,-20],
+  [100,-20, 10,  5,  5, 10,-20,100],
+];
+
 const AQUA_MSGS = {
-  start:  ['いっしょにオセロしよ♪', 'がんばって！', 'たのしもうね♪'],
-  myturn: ['うーん、どこに置こうかな…', 'ふふ、ここかな？', 'いただきます♪'],
-  win:    ['やったー！勝っちゃった♪', 'AQUA、強いでしょ？', 'えへへ、勝ったよ！'],
-  lose:   ['やるじゃない！', 'くやしい…！またやろ？', 'つぎは負けないよ！'],
-  draw:   ['引き分けだね！', 'いい勝負だったね♪'],
+  start:   ['いっしょにオセロしよ♪', 'がんばって！', 'たのしもうね♪'],
+  myturn:  ['うーん、どこに置こうかな…', 'ふふ、ここかな？', 'いただきます♪'],
+  think:   ['じっくり考えてみよう…', '計算中…♪', 'どこが一番いいかな…'],
+  win:     ['やったー！勝っちゃった♪', 'AQUA、強いでしょ？', 'えへへ、勝ったよ！'],
+  lose:    ['やるじゃない！', 'くやしい…！またやろ？', 'つぎは負けないよ！'],
+  draw:    ['引き分けだね！', 'いい勝負だったね♪'],
 };
 
 function aquaSay(key) {
@@ -448,12 +509,21 @@ function aquaSay(key) {
   if (el) el.textContent = msgs[Math.floor(Math.random() * msgs.length)];
 }
 
-let board, current, gameOver, mode = 'pvp';
+let board, current, gameOver, mode = 'pvp', difficulty = 'easy';
 
 function setMode(m) {
   mode = m;
   document.getElementById('btn-pvp').classList.toggle('active', m === 'pvp');
   document.getElementById('btn-pvc').classList.toggle('active', m === 'pvc');
+  document.getElementById('difficulty-select').classList.toggle('visible', m === 'pvc');
+  newGame();
+}
+
+function setDifficulty(d) {
+  difficulty = d;
+  ['easy','normal','hard'].forEach(k => {
+    document.getElementById('diff-' + k).classList.toggle('active', k === d);
+  });
   newGame();
 }
 
@@ -541,17 +611,105 @@ function nextTurn() {
   if (!gameOver && mode === 'pvc' && current === WHITE) setTimeout(cpuMove, 500);
 }
 
+// ── CPU AI ──
 function cpuMove() {
   if (gameOver || current !== WHITE) return;
   const moves = validMoves(board, WHITE);
   if (!moves.length) return;
-  let best = null, bestScore = -1;
-  for (const [r, c] of moves) {
-    const score = getFlips(board, r, c, WHITE).length;
-    if (score > bestScore) { bestScore = score; best = [r, c]; }
+
+  let best;
+  if (difficulty === 'easy') {
+    // ランダム
+    best = moves[Math.floor(Math.random() * moves.length)];
+  } else if (difficulty === 'normal') {
+    // 貪欲法（最もひっくり返せる手）
+    let bestScore = -1;
+    for (const [r, c] of moves) {
+      const score = getFlips(board, r, c, WHITE).length;
+      if (score > bestScore) { bestScore = score; best = [r, c]; }
+    }
+  } else {
+    // むずかしい: ミニマックス + アルファベータ枝刈り + 重みテーブル
+    aquaSay('think');
+    const depth = 6;
+    let bestVal = -Infinity;
+    for (const [r, c] of moves) {
+      const nb = cloneBoard(board);
+      const flips = getFlips(nb, r, c, WHITE);
+      applyMoveToBoard(nb, r, c, WHITE, flips);
+      const val = minimax(nb, depth - 1, -Infinity, Infinity, false);
+      if (val > bestVal) { bestVal = val; best = [r, c]; }
+    }
   }
+
   const flips = getFlips(board, best[0], best[1], WHITE);
   doMove(best[0], best[1], WHITE, flips);
+}
+
+function cloneBoard(b) {
+  return b.map(row => row.slice());
+}
+
+function applyMoveToBoard(b, r, c, color, flips) {
+  b[r][c] = color;
+  for (const [fr, fc] of flips) b[fr][fc] = color;
+}
+
+function evaluate(b) {
+  // 終局は駒数で評価
+  const myMoves  = validMoves(b, WHITE).length;
+  const oppMoves = validMoves(b, BLACK).length;
+  if (myMoves === 0 && oppMoves === 0) {
+    let w = 0, bl = 0;
+    for (const row of b) for (const v of row) { if (v === WHITE) w++; else if (v === BLACK) bl++; }
+    return (w - bl) * 1000;
+  }
+  // 位置スコア
+  let posScore = 0;
+  for (let r = 0; r < 8; r++)
+    for (let c = 0; c < 8; c++) {
+      if (b[r][c] === WHITE) posScore += POS_WEIGHTS[r][c];
+      else if (b[r][c] === BLACK) posScore -= POS_WEIGHTS[r][c];
+    }
+  // 着手可能数（モビリティ）
+  const mobility = (myMoves - oppMoves) * 5;
+  return posScore + mobility;
+}
+
+function minimax(b, depth, alpha, beta, isMax) {
+  const color = isMax ? WHITE : BLACK;
+  const moves = validMoves(b, color);
+
+  if (depth === 0 || (moves.length === 0 && validMoves(b, opponent(color)).length === 0)) {
+    return evaluate(b);
+  }
+
+  if (moves.length === 0) {
+    // パス
+    return minimax(b, depth - 1, alpha, beta, !isMax);
+  }
+
+  if (isMax) {
+    let maxVal = -Infinity;
+    for (const [r, c] of moves) {
+      const nb = cloneBoard(b);
+      applyMoveToBoard(nb, r, c, WHITE, getFlips(nb, r, c, WHITE));
+      maxVal = Math.max(maxVal, minimax(nb, depth - 1, alpha, beta, false));
+      alpha = Math.max(alpha, maxVal);
+      if (beta <= alpha) break;
+    }
+    return maxVal;
+  } else {
+    let minVal = Infinity;
+    for (const [r, c] of moves) {
+      const nb = cloneBoard(b);
+      applyMoveToBoard(nb, r, c, BLACK, getFlips(nb, r, c, BLACK));
+      minVal = Math.min(minVal, minimax(nb, depth - 1, alpha, beta, true));
+      beta = Math.min(beta, minVal);
+      if (beta <= alpha) break;
+    }
+    return minVal;
+  }
 }
 
 function countScores() {
