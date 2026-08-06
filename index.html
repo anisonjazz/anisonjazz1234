@@ -1328,6 +1328,37 @@
     .next-live-flyer { width: 100%; max-width: 260px; }
   }
 
+  /* ── LIVE ANNOUNCE BANNER ── */
+  #live-banner {
+    max-width: 100%;
+    background: linear-gradient(135deg, #200A16 0%, #1A0D18 40%, #14101A 100%);
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(232,90,138,0.25);
+    border-bottom: 1px solid rgba(232,90,138,0.25);
+  }
+
+  #live-banner::before {
+    content: 'NEXT LIVE';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 14rem;
+    font-style: italic;
+    font-weight: 900;
+    color: rgba(232,90,138,0.05);
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  #live-banner .next-live-title {
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+  }
+
   .album-tracklist {
     display: flex;
     flex-direction: column;
@@ -1419,6 +1450,36 @@
   <div class="hero-scroll">
     <span>SCROLL</span>
     <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- NEXT LIVE BANNER -->
+<div id="live-banner">
+  <div class="next-live-inner">
+    <div class="next-live-flyer">
+      <img src="images/live2026autumn.jpg" alt="#アニソンジャズ LIVE!!!!!! 2026 autumn チラシ">
+    </div>
+    <div class="next-live-badge-wrap">
+      <div class="next-live-label">Next Live</div>
+      <div class="next-live-date-big">
+        11.8
+        <small>2026 SUN</small>
+      </div>
+    </div>
+    <div class="next-live-divider"></div>
+    <div class="next-live-details">
+      <div class="next-live-title">#アニソンジャズ<br><span>LIVE!!!!!! 2026 autumn</span></div>
+      <div class="next-live-theme">秋だー！ジャンプだー！みんなあつまれー！</div>
+      <div class="next-live-meta" style="margin-top:1rem;">
+        <div class="next-live-meta-row"><strong>会場</strong><span>Live DOXY（名古屋市中区栄4-5-22 ☎052-242-1227）</span></div>
+        <div class="next-live-meta-row"><strong>日時</strong><span>2026年11月8日（日）　1st 13:30 OPEN／14:00 START　2nd 17:30 OPEN／18:00 START</span></div>
+        <div class="next-live-meta-row"><strong>料金</strong><span class="next-live-price">¥5,000-</span></div>
+      </div>
+      <p style="font-size:0.72rem;color:var(--cream-dim);opacity:0.8;margin-top:0.3rem;">※お一人様ドリンク1杯以上の注文をお願いします</p>
+      <div style="margin-top:1.2rem;display:flex;flex-wrap:wrap;gap:1rem;">
+        <a class="next-live-ticket-btn" href="https://karaokeacestore.stores.jp/?category_id=67a30e1a3626e400c25c4c04" target="_blank" rel="noopener">チケットを購入する</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1688,6 +1749,17 @@
           <p>名古屋市中区栄 Live DOXY &nbsp;|&nbsp; 1st 14:00 START / 2nd 18:00 START &nbsp;|&nbsp; ¥5,000-</p>
         </div>
         <span class="live-badge past">Completed</span>
+      </div>
+      <div class="live-item reveal reveal-delay-4">
+        <div class="live-date">
+          11.8
+          <small>2026 名古屋</small>
+        </div>
+        <div class="live-info">
+          <h3>#アニソンジャズ LIVE!!!!!! 2026 autumn</h3>
+          <p>名古屋市中区栄 Live DOXY &nbsp;|&nbsp; 1st 13:30 OPEN／14:00 START / 2nd 17:30 OPEN／18:00 START &nbsp;|&nbsp; ¥5,000-</p>
+        </div>
+        <a class="live-ticket-btn" href="https://karaokeacestore.stores.jp/?category_id=67a30e1a3626e400c25c4c04" target="_blank" rel="noopener">チケット</a>
       </div>
     </div>
   </div>
